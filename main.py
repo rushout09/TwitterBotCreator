@@ -1,4 +1,3 @@
-import random
 from typing import Optional
 
 import pyrebase
@@ -9,7 +8,6 @@ import httpx
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
-from datetime import datetime, timezone
 
 from requests import HTTPError
 from fastapi import Depends, status
@@ -154,33 +152,8 @@ async def save_schedule(handle_id: str, user_id: str, interval: int):
         "user_id": user_id,
         "handle_id": handle_id,
         "interval": interval,
-        "last_triggered": int(round(datetime.now(tz=timezone.utc).timestamp()))
+        "next_trigger": 0
     })
-
-
-async def do_retweet(user_id: str, tweet_id: str):
-    headers = await get_headers(user_id=user_id)
-    # Todo: Verify response if retweet was successful.
-    resp = httpx.post(url=f"https://api.twitter.com/2/users/{user_id}/retweets", headers=headers,
-                      json={"tweet_id": tweet_id})
-
-
-async def get_tweet_id(handle_id: str):
-    user_tweets = db.collection("users").document(handle_id).get()
-    tweets_collection: list = user_tweets.tweet_collection
-    tweets_collection_size: int = user_tweets.tweet_list_size
-    tweet_id = tweets_collection[random.randint(0, tweets_collection_size)]
-    return tweet_id
-
-
-async def trigger_schedules():
-    schedules = db.collection("schedules").where("last_triggered", '>=',
-                                                 int(round(datetime.now(tz=timezone.utc).timestamp()))).get()
-    for schedule in schedules:
-        tweet_id: str = await get_tweet_id(handle_id=schedule.handle_id)
-        await do_retweet(user_id=schedule.user_id, tweet_id=tweet_id)
-        schedule_ref = db.collection("schedules").document(schedule.id)
-        schedule_ref.update({"last_triggered": int(round(datetime.now(tz=timezone.utc).timestamp()))})
 
 
 @app.post("/retweet-user-timeline")
