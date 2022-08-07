@@ -14,4 +14,4 @@ COPY ./main.py /code/main.py
 
 COPY ./trigger.py /code/trigger.py
 
-CMD ["python", "trigger.py", "&&", "gunicorn", "main:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "127.0.0.1:8100"]
+CMD ["gunicorn", "main:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "127.0.0.1:8100"]
