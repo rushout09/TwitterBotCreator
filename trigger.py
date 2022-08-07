@@ -15,7 +15,7 @@ db = firestore.client()
 
 def get_headers(user_id: str):
     data = {'end_user': user_id, 'provider': 'twitter', 'username': 'rushabha8@gmail.com', 'password': 'password'}
-    r = httpx.post("https://2d89-14-143-179-162.in.ngrok.io/get-access-token", data=data)
+    r = httpx.post("http://127.0.0.1/get-access-token", data=data)
     token = r.text.strip('"')
     headers = {'Authorization': f"Bearer {token}", 'Accept': 'application/json'}
     return headers

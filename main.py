@@ -69,7 +69,7 @@ def validate_login_creds(form_data: OAuth2PasswordRequestForm = Depends()):
 @app.post("/authorize-twitter")
 async def authorize_twitter(user_id: str = Depends(validate_login_creds)):
     data = {'end_user': user_id, 'username': 'rushabha8@gmail.com', 'password': 'password'}
-    r = httpx.post("https://2d89-14-143-179-162.in.ngrok.io/authorize-twitter", data=data)
+    r = httpx.post("http://127.0.0.1/authorize-twitter", data=data)
     return r.text.strip("'")
 
 
@@ -140,7 +140,7 @@ async def save_tweets_from_handle(handle_id: str, user_id: str):
 
 async def get_headers(user_id: str):
     data = {'end_user': user_id, 'provider': 'twitter', 'username': 'rushabha8@gmail.com', 'password': 'password'}
-    r = httpx.post("https://2d89-14-143-179-162.in.ngrok.io/get-access-token", data=data)
+    r = httpx.post("http://127.0.0.1/get-access-token", data=data)
     token = r.text.strip('"')
     headers = {'Authorization': f"Bearer {token}", 'Accept': 'application/json'}
     return headers
